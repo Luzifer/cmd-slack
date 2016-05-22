@@ -14,10 +14,11 @@ import (
 
 var (
 	cfg = struct {
-		Hook     string `flag:"hook,h" default:"" description:"Slack incoming webhook"`
-		Username string `flag:"username,u" default:"CmdSlack" description:"Username to use in WebHook command"`
-		Icon     string `flag:"icon,i" default:":package:" description:"Icon to use for the webhook"`
-		Channel  string `flag:"channel,c" default:"" description:"Channel to send the message to"`
+		Hook        string `flag:"hook,h" default:"" description:"Slack incoming webhook"`
+		Username    string `flag:"username,u" default:"CmdSlack" description:"Username to use in WebHook command"`
+		Icon        string `flag:"icon,i" default:":package:" description:"Icon to use for the webhook"`
+		Channel     string `flag:"channel,c" default:"" description:"Channel to send the message to"`
+		Description string `flag:"description,d" default:"" description:"Add a piece of text to prepent to the output"`
 	}{}
 
 	version = "dev"
@@ -46,11 +47,16 @@ func main() {
 		os.Exit(0)
 	}
 
+	text := "```\n" + buf.String() + "```"
+	if cfg.Description != "" {
+		text = cfg.Description + "\n" + text
+	}
+
 	slo := slack{
 		Username: cfg.Username,
 		Icon:     cfg.Icon,
 		Channel:  cfg.Channel,
-		Text:     "```\n" + buf.String() + "```",
+		Text:     text,
 	}
 
 	body := bytes.NewBuffer([]byte{})
