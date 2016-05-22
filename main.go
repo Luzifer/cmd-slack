@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/Luzifer/rconfig"
 )
@@ -37,6 +39,11 @@ func main() {
 	cmd.Stdout = buf
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("Command error: %s", err)
+	}
+
+	if strings.TrimSpace(buf.String()) == "" {
+		log.Printf("Command had empty output, ignoring")
+		os.Exit(0)
 	}
 
 	slo := slack{
